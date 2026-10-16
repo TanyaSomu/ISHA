@@ -1,0 +1,22 @@
+{
+  "name": "sattva-living",
+  "version": "1.0.0",
+  "description": "Sattva Living - AI-Powered Yoga & Wellness E-Commerce Platform",
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=server\" \"npm run dev --workspace=client\"",
+    "build": "npm run build --workspace=server && npm run build --workspace=client",
+    "test": "npm run test --workspace=server && npm run test --workspace=client",
+    "db:start": "powershell -Command \"Start-Process -FilePath 'D:\\path\\POSTGRES\\bin\\postgres.exe' -ArgumentList '-D', '.pgdata', '-p', '5433' -WindowStyle Hidden\"",
+    "db:migrate": "npm run prisma:migrate --workspace=server",
+    "db:seed": "npm run prisma:seed --workspace=server",
+    "setup": "npm install && npm run db:migrate && npm run db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
