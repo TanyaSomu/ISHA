@@ -50,6 +50,25 @@ export const createApp = (): Express => {
     legacyHeaders: false,
   });
 
+  // Root health & status endpoint
+  app.get('/', (req: Request, res: Response) => {
+    res.status(200).json({
+      success: true,
+      brand: config.brand.name,
+      message: `${config.brand.name} Backend API is active`,
+      health: '/api/health',
+      products: '/api/products',
+    });
+  });
+
+  // Favicon handlers (prevent 404 / error noise)
+  app.get('/favicon.ico', (req: Request, res: Response) => {
+    res.status(204).end();
+  });
+  app.get('/favicon.png', (req: Request, res: Response) => {
+    res.status(204).end();
+  });
+
   // Health check endpoint
   app.get('/api/health', (req: Request, res: Response) => {
     res.status(200).json({
@@ -81,3 +100,6 @@ export const createApp = (): Express => {
 
   return app;
 };
+
+export const app = createApp();
+export default app;

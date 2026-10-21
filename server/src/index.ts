@@ -1,7 +1,5 @@
-import { createApp } from './app.js';
+import app from './app.js';
 import { config } from './config/index.js';
-
-const app = createApp();
 
 // Avoid starting a persistent listening server in serverless / Vercel or test environments
 if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
