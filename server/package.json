@@ -15,12 +15,6 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "test": "vitest run"
   },
-  "allowScripts": {
-    "@prisma/client": true,
-    "@prisma/engines": true,
-    "prisma": true,
-    "esbuild": true
-  },
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
     "@prisma/client": "^5.22.0",
