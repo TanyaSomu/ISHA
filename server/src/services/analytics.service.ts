@@ -1,4 +1,5 @@
 import { prisma } from '../utils/prisma.js';
+import { OrderStatus } from '@prisma/client';
 
 export class AnalyticsService {
   static async recordEvent(data: {
@@ -91,9 +92,15 @@ export class AnalyticsService {
       },
     });
 
-    const completedOrders = orders.filter((o) => o.status !== 'CANCELLED');
+    const completedOrders = orders.filter(
+      (o: { status: OrderStatus | string; totalAmount: number; items: { productId: string; productName: string; quantity: number }[] }) =>
+        o.status !== OrderStatus.CANCELLED
+    );
     const completedOrdersCount = completedOrders.length;
-    const recordedRevenue = completedOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+    const recordedRevenue = completedOrders.reduce(
+      (sum: number, o: { totalAmount: number }) => sum + o.totalAmount,
+      0
+    );
 
     // Conversion rate: (sessions with completed order / total sessions) * 100
     const conversionRate = parseFloat(

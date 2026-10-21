@@ -1,7 +1,7 @@
 import { prisma } from '../utils/prisma.js';
 import { AppError } from '../middlewares/errorHandler.js';
 import { config } from '../config/index.js';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus, Prisma } from '@prisma/client';
 
 export interface CheckoutItemInput {
   productId: string;
@@ -27,7 +27,7 @@ export class OrderService {
     }
 
     // Run order creation and inventory decrement inside an isolated Prisma transaction
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       let calculatedSubtotal = 0;
       const orderItemsToCreate: Array<{
         productId: string;

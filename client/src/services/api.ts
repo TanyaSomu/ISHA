@@ -7,7 +7,7 @@ import {
   AnalyticsData,
 } from '../types/index.js';
 
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_URL ? (import.meta.env.VITE_API_URL as string).replace(/\/$/, '') : '') + '/api';
 
 export function getSessionId(): string {
   let sid = localStorage.getItem('sattva_session_id');
@@ -159,7 +159,7 @@ export const api = {
   // Analytics Event Tracking
   async trackEvent(eventType: string, eventData?: Record<string, any>) {
     try {
-      await fetch('/api/analytics/track', {
+      await fetch(`${API_BASE}/analytics/track`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

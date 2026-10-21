@@ -58,7 +58,10 @@ export class AdminController {
         }),
       ]);
 
-      const totalRecordedRevenue = completedOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+      const totalRecordedRevenue = completedOrders.reduce(
+        (sum: number, o: { totalAmount: number }) => sum + o.totalAmount,
+        0
+      );
 
       // Fetch 5 most recent orders for quick review
       const recentOrders = await prisma.order.findMany({
