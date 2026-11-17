@@ -272,4 +272,17 @@ describe('Sattva Living Backend API Test Suite', () => {
       expect(rec.reason).toBeDefined();
     }
   });
+
+  // TEST 20: Serverless entry point (api/index.ts) is properly wired and handles requests
+  it('Serverless Entrypoint: api/index exports working Express app with API status and health', async () => {
+    const serverlessApp = (await import('../../api/index.js')).default;
+    const res = await request(serverlessApp).get('/api');
+    expect(res.status).toBe(200);
+    expect(res.body.success).toBe(true);
+    expect(res.body.brand).toBe('Sattva Living');
+
+    const healthRes = await request(serverlessApp).get('/api/health');
+    expect(healthRes.status).toBe(200);
+    expect(healthRes.body.status).toBe('healthy');
+  });
 });

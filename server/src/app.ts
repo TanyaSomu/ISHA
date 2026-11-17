@@ -13,6 +13,33 @@ import analyticsRoutes from './routes/analytics.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 
+export const isOriginAllowed = (
+  origin: string | undefined,
+  nodeEnv: string = config.nodeEnv,
+  clientOrigin: string = config.clientOrigin
+): boolean => {
+  // Allow requests with no Origin header (e.g. mobile apps, curl, server-to-server)
+  if (!origin || origin.trim() === '') return true;
+
+  const allowedOrigins = new Set<string>();
+
+  // Explicitly trusted production domain
+  allowedOrigins.add('https://isha-eosin-alpha.vercel.app');
+
+  // Configured client origin, provided it is valid
+  if (clientOrigin && clientOrigin.trim() !== '') {
+    allowedOrigins.add(clientOrigin.trim());
+  }
+
+  // Localhost origins are allowed ONLY outside production
+  if (nodeEnv !== 'production') {
+    allowedOrigins.add('http://localhost:5173');
+    allowedOrigins.add('http://127.0.0.1:5173');
+  }
+
+  return allowedOrigins.has(origin);
+};
+
 export const createApp = (): Express => {
   const app = express();
 
@@ -22,7 +49,13 @@ export const createApp = (): Express => {
   // CORS configuration
   app.use(
     cors({
-      origin: [config.clientOrigin, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+      origin: (origin, callback) => {
+        if (isOriginAllowed(origin)) {
+          callback(null, true);
+        } else {
+          callback(null, false);
+        }
+      },
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
@@ -51,7 +84,7 @@ export const createApp = (): Express => {
   });
 
   // Root health & status endpoint
-  app.get('/', (req: Request, res: Response) => {
+  app.get(['/', '/api'], (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       brand: config.brand.name,
